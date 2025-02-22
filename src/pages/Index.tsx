@@ -1,7 +1,7 @@
 
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, Hotel as HotelIcon, Tent as TentIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -56,12 +56,12 @@ const features = [
   {
     title: "Luxury Hotels",
     description: "Find and book the perfect stay from our curated selection of premium hotels.",
-    icon: Hotel,
+    icon: HotelIcon,
   },
   {
     title: "Thrilling Parks",
     description: "Discover exciting amusement parks for unforgettable adventures.",
-    icon: Tent,
+    icon: TentIcon,
   },
   {
     title: "Smart Booking",
