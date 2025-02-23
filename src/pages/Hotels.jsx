@@ -35,16 +35,22 @@ const mockHotels = [
 const Hotels = () => {
   const [showBooking, setShowBooking] = useState(false);
   const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [date, setDate] = useState({
+    from: new Date(),
+    to: undefined,
+  });
+
   const [filteredHotels, setFilteredHotels] = useState(mockHotels);
 
   const handleSearch = () => {
-    // In a real app, this would filter based on the API response
     setFilteredHotels(mockHotels.filter(hotel => 
       hotel.location.toLowerCase().includes(location.toLowerCase())
     ));
     setShowBooking(false);
+  };
+
+  const dateFormat = (date) => {
+    return date ? format(date, "MMM d, yyyy") : "";
   };
 
   return (
@@ -58,7 +64,7 @@ const Hotels = () => {
             <DialogTrigger asChild>
               <Button>Book a Hotel</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Book Your Stay</DialogTitle>
               </DialogHeader>
@@ -78,18 +84,30 @@ const Hotels = () => {
                 </div>
                 <div className="grid gap-2">
                   <label>Dates</label>
-                  <div className="grid gap-4">
+                  <div className="rounded-md border">
+                    <div className="flex items-center justify-center p-4">
+                      <div className="text-center">
+                        <div className="flex space-x-4">
+                          <div>
+                            <p className="font-medium">Check in</p>
+                            <p className="text-gray-500">{dateFormat(date.from)}</p>
+                          </div>
+                          <div className="border-l border-gray-200" />
+                          <div>
+                            <p className="font-medium">Check out</p>
+                            <p className="text-gray-500">{dateFormat(date.to)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <Calendar
+                      initialFocus
                       mode="range"
-                      selected={{
-                        from: startDate,
-                        to: endDate,
-                      }}
-                      onSelect={(range) => {
-                        if (range?.from) setStartDate(range.from);
-                        if (range?.to) setEndDate(range.to);
-                      }}
+                      defaultMonth={date.from}
+                      selected={date}
+                      onSelect={setDate}
                       numberOfMonths={2}
+                      className="w-full"
                     />
                   </div>
                 </div>
