@@ -5,6 +5,7 @@ import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { MapPin, Calendar } from "lucide-react";
+import { format } from "date-fns";
 
 const mockBookings = [
   {
@@ -25,6 +26,11 @@ const mockBookings = [
     price: 109,
   },
 ];
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, 'MMM d, yyyy');
+};
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -85,10 +91,13 @@ const Profile = () => {
                   
                   <p className="text-gray-600">
                     <Calendar className="inline-block w-4 h-4 mr-1" />
-                    {booking.type === "Hotel" 
-                      ? `${booking.checkIn} to ${booking.checkOut}`
-                      : booking.date
-                    }
+                    {booking.type === "Hotel" ? (
+                      <span>
+                        {formatDate(booking.checkIn)} - {formatDate(booking.checkOut)}
+                      </span>
+                    ) : (
+                      <span>{formatDate(booking.date)}</span>
+                    )}
                   </p>
                   
                   <div className="mt-2">
