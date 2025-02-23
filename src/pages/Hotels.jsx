@@ -50,7 +50,7 @@ const Hotels = () => {
   };
 
   const dateFormat = (date) => {
-    return date ? format(date, "MMM d, yyyy") : "";
+    return date ? format(date, "MMM d, yyyy") : "Select date";
   };
 
   return (
@@ -64,54 +64,57 @@ const Hotels = () => {
             <DialogTrigger asChild>
               <Button>Book a Hotel</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[700px]">
               <DialogHeader>
-                <DialogTitle>Book Your Stay</DialogTitle>
+                <DialogTitle className="text-2xl">Book Your Stay</DialogTitle>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-6 py-4">
                 <div className="grid gap-2">
-                  <label htmlFor="location">Location</label>
+                  <label htmlFor="location" className="text-lg font-medium">Location</label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
                       id="location"
                       placeholder="Where are you going?"
-                      className="pl-10"
+                      className="pl-10 h-12 text-lg"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="grid gap-2">
-                  <label>Dates</label>
-                  <div className="rounded-md border">
-                    <div className="flex items-center justify-center p-4">
-                      <div className="text-center">
-                        <div className="flex space-x-4">
-                          <div>
-                            <p className="font-medium">Check in</p>
-                            <p className="text-gray-500">{dateFormat(date.from)}</p>
-                          </div>
-                          <div className="border-l border-gray-200" />
-                          <div>
-                            <p className="font-medium">Check out</p>
-                            <p className="text-gray-500">{dateFormat(date.to)}</p>
-                          </div>
-                        </div>
+                  <label className="text-lg font-medium">Dates</label>
+                  <div className="p-4 rounded-lg border bg-white shadow-sm">
+                    <div className="flex items-center justify-between px-4 py-2 mb-4 bg-gray-50 rounded-lg">
+                      <div className="text-center flex-1">
+                        <p className="font-medium text-gray-600">Check in</p>
+                        <p className="text-lg font-semibold">{dateFormat(date.from)}</p>
+                      </div>
+                      <div className="h-8 w-px bg-gray-300 mx-4" />
+                      <div className="text-center flex-1">
+                        <p className="font-medium text-gray-600">Check out</p>
+                        <p className="text-lg font-semibold">{dateFormat(date.to)}</p>
                       </div>
                     </div>
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={date.from}
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
-                      className="w-full"
-                    />
+                    <div className="overflow-hidden">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={date.from}
+                        selected={date}
+                        onSelect={setDate}
+                        numberOfMonths={2}
+                        className="flex bg-white p-0 justify-center [&_.rdp-nav]:hidden [&_.rdp-caption]:text-lg [&_.rdp-cell]:text-center [&_.rdp-head_th]:font-medium"
+                      />
+                    </div>
                   </div>
                 </div>
-                <Button onClick={handleSearch}>Search</Button>
+                <Button 
+                  onClick={handleSearch} 
+                  className="w-full h-12 text-lg font-medium mt-2"
+                >
+                  Search Hotels
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
