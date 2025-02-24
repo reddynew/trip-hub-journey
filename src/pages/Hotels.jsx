@@ -39,7 +39,8 @@ const Hotels = () => {
     from: new Date(),
     to: undefined,
   });
-
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
   const [filteredHotels, setFilteredHotels] = useState(mockHotels);
 
   const handleSearch = () => {
@@ -64,54 +65,86 @@ const Hotels = () => {
             <DialogTrigger asChild>
               <Button>Book a Hotel</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[700px]">
+            <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle className="text-2xl">Book Your Stay</DialogTitle>
+                <DialogTitle className="text-2xl text-center">Find Your Stay</DialogTitle>
               </DialogHeader>
-              <div className="grid gap-6 py-4">
-                <div className="grid gap-2">
-                  <label htmlFor="location" className="text-lg font-medium">Location</label>
+              <div className="p-6 space-y-6">
+                {/* Location Input */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Location</label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
-                      id="location"
                       placeholder="Where are you going?"
-                      className="pl-10 h-12 text-lg"
+                      className="pl-10 h-12"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                     />
                   </div>
                 </div>
-                <div className="grid gap-2">
-                  <label className="text-lg font-medium">Dates</label>
-                  <div className="p-4 rounded-lg border bg-white shadow-sm">
-                    <div className="flex items-center justify-between px-4 py-2 mb-4 bg-gray-50 rounded-lg">
+
+                {/* Date Selection */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Dates</label>
+                  <div className="p-4 rounded-lg border bg-white">
+                    <div className="flex items-center justify-between mb-4">
                       <div className="text-center flex-1">
-                        <p className="font-medium text-gray-600">Check in</p>
-                        <p className="text-lg font-semibold">{dateFormat(date.from)}</p>
+                        <p className="text-sm font-medium text-gray-600">Check in</p>
+                        <p className="text-base font-semibold">{dateFormat(date.from)}</p>
                       </div>
-                      <div className="h-8 w-px bg-gray-300 mx-4" />
+                      <div className="h-8 w-px bg-gray-200 mx-4" />
                       <div className="text-center flex-1">
-                        <p className="font-medium text-gray-600">Check out</p>
-                        <p className="text-lg font-semibold">{dateFormat(date.to)}</p>
+                        <p className="text-sm font-medium text-gray-600">Check out</p>
+                        <p className="text-base font-semibold">{dateFormat(date.to)}</p>
                       </div>
                     </div>
-                    <div className="overflow-hidden">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={date.from}
-                        selected={date}
-                        onSelect={setDate}
-                        numberOfMonths={2}
-                        className="flex bg-white p-0 justify-center [&_.rdp-nav]:hidden [&_.rdp-caption]:text-lg [&_.rdp-cell]:text-center [&_.rdp-head_th]:font-medium"
-                      />
-                    </div>
+                    <Calendar
+                      mode="range"
+                      selected={date}
+                      onSelect={setDate}
+                      numberOfMonths={2}
+                      className="rounded-md border-0"
+                    />
                   </div>
                 </div>
+
+                {/* Guests Selection */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
+                    <select
+                      className="w-full p-2 border rounded-md bg-white"
+                      value={adults}
+                      onChange={(e) => setAdults(Number(e.target.value))}
+                    >
+                      {[...Array(6)].map((_, i) => (
+                        <option key={i} value={i + 1}>
+                          {i + 1} {i === 0 ? "Adult" : "Adults"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
+                    <select
+                      className="w-full p-2 border rounded-md bg-white"
+                      value={children}
+                      onChange={(e) => setChildren(Number(e.target.value))}
+                    >
+                      {[...Array(6)].map((_, i) => (
+                        <option key={i} value={i}>
+                          {i} {i === 1 ? "Child" : "Children"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Search Button */}
                 <Button 
                   onClick={handleSearch} 
-                  className="w-full h-12 text-lg font-medium mt-2"
+                  className="w-full h-12 text-lg font-medium"
                 >
                   Search Hotels
                 </Button>
