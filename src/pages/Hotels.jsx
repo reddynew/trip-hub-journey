@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -34,6 +33,7 @@ const mockHotels = [
 ];
 
 const Hotels = () => {
+  const [open, setOpen] = useState(false);
   const [location, setLocation] = useState("");
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
@@ -45,6 +45,7 @@ const Hotels = () => {
     setFilteredHotels(mockHotels.filter(hotel => 
       hotel.location.toLowerCase().includes(location.toLowerCase())
     ));
+    setOpen(false); // Close the dialog after search
   };
 
   return (
@@ -54,7 +55,7 @@ const Hotels = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Hotels</h1>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button>Book a Hotel</Button>
             </DialogTrigger>
@@ -107,31 +108,23 @@ const Hotels = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
-                    <select
+                    <input
+                      type="number"
+                      min="1"
                       className="w-full p-2 border rounded-md bg-white"
                       value={adults}
                       onChange={(e) => setAdults(Number(e.target.value))}
-                    >
-                      {[...Array(6)].map((_, i) => (
-                        <option key={i} value={i + 1}>
-                          {i + 1} {i === 0 ? "Adult" : "Adults"}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
-                    <select
+                    <input
+                      type="number"
+                      min="0"
                       className="w-full p-2 border rounded-md bg-white"
                       value={children}
                       onChange={(e) => setChildren(Number(e.target.value))}
-                    >
-                      {[...Array(6)].map((_, i) => (
-                        <option key={i} value={i}>
-                          {i} {i === 1 ? "Child" : "Children"}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 </div>
 
