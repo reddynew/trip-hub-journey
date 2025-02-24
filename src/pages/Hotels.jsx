@@ -3,10 +3,11 @@ import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
+import DatePicker from "react-date-picker";
+import "react-date-picker/dist/DatePicker.css";
+import "react-calendar/dist/Calendar.css";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MapPin, Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { MapPin } from "lucide-react";
 
 const mockHotels = [
   {
@@ -33,12 +34,9 @@ const mockHotels = [
 ];
 
 const Hotels = () => {
-  const [showBooking, setShowBooking] = useState(false);
   const [location, setLocation] = useState("");
-  const [date, setDate] = useState({
-    from: new Date(),
-    to: undefined,
-  });
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [filteredHotels, setFilteredHotels] = useState(mockHotels);
@@ -47,11 +45,6 @@ const Hotels = () => {
     setFilteredHotels(mockHotels.filter(hotel => 
       hotel.location.toLowerCase().includes(location.toLowerCase())
     ));
-    setShowBooking(false);
-  };
-
-  const dateFormat = (date) => {
-    return date ? format(date, "MMM d, yyyy") : "Select date";
   };
 
   return (
@@ -67,13 +60,13 @@ const Hotels = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle className="text-2xl text-center">Find Your Stay</DialogTitle>
+                <DialogTitle className="text-2xl text-center mb-6">Find Your Stay</DialogTitle>
               </DialogHeader>
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-6 bg-white rounded-xl">
                 {/* Location Input */}
-                <div className="space-y-2">
+                <div>
                   <label className="block text-sm font-medium text-gray-700">Location</label>
-                  <div className="relative">
+                  <div className="relative mt-1">
                     <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
                       placeholder="Where are you going?"
@@ -84,27 +77,28 @@ const Hotels = () => {
                   </div>
                 </div>
 
-                {/* Date Selection */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Dates</label>
-                  <div className="p-4 rounded-lg border bg-white">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="text-center flex-1">
-                        <p className="text-sm font-medium text-gray-600">Check in</p>
-                        <p className="text-base font-semibold">{dateFormat(date.from)}</p>
-                      </div>
-                      <div className="h-8 w-px bg-gray-200 mx-4" />
-                      <div className="text-center flex-1">
-                        <p className="text-sm font-medium text-gray-600">Check out</p>
-                        <p className="text-base font-semibold">{dateFormat(date.to)}</p>
-                      </div>
-                    </div>
-                    <Calendar
-                      mode="range"
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
-                      className="rounded-md border-0"
+                {/* Date Pickers */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
+                    <DatePicker
+                      onChange={setCheckIn}
+                      value={checkIn}
+                      className="w-full border rounded-md"
+                      clearIcon={null}
+                      calendarIcon={null}
+                      format="MM/dd/yyyy"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
+                    <DatePicker
+                      onChange={setCheckOut}
+                      value={checkOut}
+                      className="w-full border rounded-md"
+                      clearIcon={null}
+                      calendarIcon={null}
+                      format="MM/dd/yyyy"
                     />
                   </div>
                 </div>
@@ -144,7 +138,7 @@ const Hotels = () => {
                 {/* Search Button */}
                 <Button 
                   onClick={handleSearch} 
-                  className="w-full h-12 text-lg font-medium"
+                  className="w-full h-12 text-lg font-medium mt-4"
                 >
                   Search Hotels
                 </Button>
