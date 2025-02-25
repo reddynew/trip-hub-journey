@@ -1,62 +1,117 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
-interface User {
+interface AuthUser {
   id: string;
   email: string;
   name: string;
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for saved user session
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        updateUserState(session.user);
+      }
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        updateUserState(session.user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
+  const updateUserState = async (supabaseUser: User) => {
+    // Fetch the user's profile from the profiles table
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", supabaseUser.id)
+      .single();
+
+    setUser({
+      id: supabaseUser.id,
+      email: supabaseUser.email!,
+      name: profile?.name || "User",
+    });
+  };
+
   const login = async (email: string, password: string) => {
-    // TODO: Replace with actual authentication logic
-    const mockUser = {
-      id: "1",
-      email,
-      name: "John Doe",
-    };
-    setUser(mockUser);
-    localStorage.setItem("user", JSON.stringify(mockUser));
-    navigate("/profile");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      navigate("/profile");
+      toast.success("Signed in successfully!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign in");
+      throw error;
+    }
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    // TODO: Replace with actual signup logic
-    const mockUser = {
-      id: "1",
-      email,
-      name,
-    };
-    setUser(mockUser);
-    localStorage.setItem("user", JSON.stringify(mockUser));
-    navigate("/profile");
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      navigate("/profile");
+      toast.success("Account created successfully! Please check your email for verification.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create account");
+      throw error;
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    navigate("/");
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setUser(null);
+      navigate("/");
+      toast.success("Signed out successfully!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign out");
+      throw error;
+    }
   };
 
   return (
