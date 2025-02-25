@@ -47,18 +47,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateUserState = async (supabaseUser: User) => {
-    // Fetch the user's profile from the profiles table
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("name")
-      .eq("id", supabaseUser.id)
-      .single();
+    try {
+      // Fetch the user's profile from the profiles table
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', supabaseUser.id)
+        .single();
 
-    setUser({
-      id: supabaseUser.id,
-      email: supabaseUser.email!,
-      name: profile?.name || "User",
-    });
+      if (error) {
+        console.error('Error fetching profile:', error);
+        // Still set the user with default name if profile fetch fails
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email || '',
+          name: 'User',
+        });
+        return;
+      }
+
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        name: profileData?.name || 'User',
+      });
+    } catch (error) {
+      console.error('Error in updateUserState:', error);
+      // Fallback to basic user info if profile fetch fails
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        name: 'User',
+      });
+    }
   };
 
   const login = async (email: string, password: string) => {
