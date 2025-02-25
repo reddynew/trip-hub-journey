@@ -50,7 +50,9 @@
     --input: 240 3.7% 15.9%;
     --ring: 142.4 71.8% 29.2%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
@@ -60,17 +62,21 @@
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg;
-  }
-
-  .glass-card-dark {
-    @apply bg-black/80 backdrop-blur-lg border border-white/10 shadow-lg;
+    @apply bg-white/90 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl transition-all hover:shadow-xl hover:scale-[1.02];
   }
 }
 
 @layer utilities {
   .animate-in {
     animation: animate-in 0.5s ease-out;
+  }
+
+  .section-padding {
+    @apply py-16 px-4 sm:px-6 lg:px-8;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
   }
 
   @keyframes animate-in {
